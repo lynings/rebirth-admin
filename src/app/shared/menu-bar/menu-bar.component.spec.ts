@@ -1,29 +1,71 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, inject, TestBed } from '@angular/core/testing';
 
 import { MenuBarComponent } from './menu-bar.component';
-import { CollapseDirective } from '../collapse/collapse.directive';
 import { TestBedUtils } from '../../../test-utils/test-bed-utils';
-import { MenuBarService } from './menu-bar.service';
+import { Router } from '@angular/router';
+import { WindowRef } from 'rebirth-ng';
 
 describe('MenuBarComponent', () => {
-  let component: MenuBarComponent;
   let fixture: ComponentFixture<MenuBarComponent>;
-
   beforeEach(async(() => {
     TestBedUtils.configureTestingModule({
-      declarations: [CollapseDirective, MenuBarComponent],
-      providers: [MenuBarService]
-    }, { ignoreShareModule: true })
+      providers: [
+        {
+          provide: WindowRef,
+          useValue: { innerWidth: 0 }
+        }
+      ]
+    })
       .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MenuBarComponent);
-    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should be created', () => {
-    expect(component).toBeTruthy();
+  it('should show text & icon menu', () => {
+    const component = fixture.componentInstance;
+    component.isTextMenuBarOpen = true;
+    component.isIconMenuBarOpen = true;
+    expect(component.getClassNames()).toEqual('open-text-menu open-icon-menu');
   });
+
+  it('should hide text & icon menu', () => {
+    const component = fixture.componentInstance;
+    component.isTextMenuBarOpen = false;
+    component.isIconMenuBarOpen = false;
+    expect(component.getClassNames()).toEqual('hide-text-menu hide-icon-menu');
+  });
+
+  it('should show up arrow in menu item', inject([Router], () => {
+    const url = '/test';
+    const component = fixture.componentInstance;
+    (component as any).router = { url };
+    expect(component.shouldShowUpArrow(url)).toBeTruthy();
+  }));
+
+  it('should show text bar & menu bar when toggle with window width less than middle screen',
+    inject([Router], () => {
+
+      const component = fixture.componentInstance as any;
+      component.windowRef.innerWidth = MenuBarComponent.MIN_MIDDLE_SCREEN - 10;
+      component.toggle();
+
+      expect(component.isTextMenuBarOpen).toBeTruthy();
+      expect(component.isIconMenuBarOpen).toBeTruthy();
+    }));
+
+  it('should hide text bar & show menu bar when toggle with window width greater than middle screen',
+    inject([], () => {
+
+      const component = fixture.componentInstance as any;
+      component.isTextMenuBarOpen = true;
+      component.windowRef.innerWidth = MenuBarComponent.MIN_MIDDLE_SCREEN + 10;
+      component.toggle();
+
+      expect(component.isTextMenuBarOpen).toBeFalsy();
+      expect(component.isIconMenuBarOpen).toBeTruthy();
+    }));
+
 });

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../environments/environment';
-import { LoginService } from '../core/login/login.service';
+import { LoginService } from './login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,11 +14,11 @@ export class LoginComponent {
   loginForm: FormGroup;
   showError: boolean;
 
-  constructor(private fb: FormBuilder, private loginService: LoginService) {
+  constructor(private fb: FormBuilder, private loginService: LoginService, private router: Router) {
     this.loginForm = fb.group({
-      'userName': ['', Validators.required],
+      'username': ['', Validators.required],
       'password': ['', Validators.required]
-    })
+    });
   }
 
   login() {
@@ -27,7 +28,7 @@ export class LoginComponent {
 
     this.loginService.login(this.loginForm.value)
       .subscribe(
-        (user) => console.log(`login success. Get user:`, user),
+        (user) => this.router.navigateByUrl('/manage/home'),
         () => this.showError = true
       );
   }

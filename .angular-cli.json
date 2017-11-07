@@ -53,15 +53,12 @@
     },
     "codeCoverage": {
       "exclude": [
-        "src/app/**"
+        "src/test-utils/**"
       ]
     }
   },
   "defaults": {
     "styleExt": "scss",
-    "class": {
-      "spec": false
-    },
     "component": {}
   }
 }

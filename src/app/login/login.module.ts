@@ -4,6 +4,7 @@ import { LoginComponent } from './login.component';
 import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { ROUTER_CONFIG } from './login.routes';
+import { LoginService } from './login.service';
 
 @NgModule({
   imports: [
@@ -13,8 +14,9 @@ import { ROUTER_CONFIG } from './login.routes';
   exports: [],
   declarations: [LoginComponent],
   providers: [
-
+    LoginService
   ],
 })
 export class LoginModule {
+
 }
